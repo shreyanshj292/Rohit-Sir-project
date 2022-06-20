@@ -30,15 +30,22 @@ function ProvidersPage({}) {
       }
     });
   };
+  
+  const get_all_providers = async () => {
+    const request = await fetch(`https://api.themoviedb.org/3/watch/providers/tv?api_key=02f5d3847dfcb55ed317924dc9b17d62&language=en-CA`);
+    const response = await request.json();
+    setProviderList(response["results"]);
+     
+  } 
 
   useEffect(() => {
     if (id) {
       setProviderId(id);
       let a = get_provider_shows(id);
-
     }
-    setProviderList(providers);
-    // console.log(providerList);
+    get_all_providers();
+    // setProviderList(providers);
+    console.log(providerList);
   }, []);
 
   if (validId) {
@@ -47,10 +54,11 @@ function ProvidersPage({}) {
         {!providerId ? (
           <div className="providers-container">
             {Object.keys(providerList).map((key) => {
+              console.log(providerList[key])
               return (
                 <div>
-                  <a href={`/providers?id=${providerList[key].id}`}>
-                    {providerList[key].displayName}
+                  <a href={`/providers?id=${providerList[key].provider_id}`}>
+                    {providerList[key].provider_name}
                   </a>
                 </div>
               );
@@ -59,15 +67,17 @@ function ProvidersPage({}) {
         ) : (
           <div className="provider-shows">
             {shows.map((show, index) => {
-              return (
-                <>
+              if(index < 20){
+                console.log(show)
+                return (
+                  <>
                   <div className="provider-show">
                     <img
                       className="provider-shows-poster"
                       src={`https://image.tmdb.org/t/p/w500/${show.poster_path}`}
                       height={200}
                       width={120}
-                    />
+                      />
 
                     {show.name}
                   </div>
@@ -75,6 +85,7 @@ function ProvidersPage({}) {
                   {index % 5 === 4 && <div className="line-break"></div>}
                 </>
               );
+            }
             })}
           </div>
         )}
